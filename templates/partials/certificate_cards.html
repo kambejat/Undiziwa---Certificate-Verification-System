@@ -1,0 +1,23 @@
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+  {% if certificates %}
+    {% for cert in certificates %}
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-sm font-medium text-gray-600">Certificate ID</p>
+          <span class="text-sm font-medium text-gray-500">{{ cert.status }}</span>
+        </div>
+        <p class="text-xl font-bold text-gray-900 mt-2">{{ cert.certificate_id }}</p>
+        <p class="text-gray-500 mt-1">Student: {{ cert.student_name }}</p>
+        {% if cert.institution_name %}
+        <p class="text-gray-500 mt-1">Institution: {{ cert.institution_name }}</p>
+        {% endif %}
+        <!-- <a href="{{ url_for('api.get_certificates', cert_id=cert.certificate_id) }}"
+           class="mt-4 inline-block px-3 py-2 text-sm font-semibold bg-indigo-600 text-white rounded hover:bg-indigo-700">
+           View
+        </a> -->
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-gray-500 col-span-4 text-center">No certificates found.</p>
+  {% endif %}
+</div>

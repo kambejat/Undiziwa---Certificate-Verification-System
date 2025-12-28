@@ -1,0 +1,318 @@
+{% extends "layout.html" %} {% block content %}
+<div class="bg-gray-50 min-h-screen p-2 rounded-sm py-4">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-2xl font-semibold mb-6">
+      {{ institution.institution_name }} - Dashboard
+    </h2>
+
+    <!-- Tabs -->
+    <div class="border-b border-default">
+      <ul class="flex flex-wrap -mb-px text-sm font-medium text-center text-body" id="dashboardTabs">
+        <li class="me-2">
+          <button type="button"
+            class="tab-button inline-flex items-center justify-center p-4 border-b border-transparent rounded-t-base hover:text-fg-brand hover:border-brand group"
+            data-tab="pending">
+            <!-- Icon -->
+            <svg class="w-4 h-4 me-2 text-body group-hover:text-fg-brand" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-width="2" d="M12 3v18M3 12h18" />
+            </svg>
+            Pending Certificates
+          </button>
+        </li>
+
+        <li class="me-2">
+          <button type="button"
+            class="tab-button inline-flex items-center justify-center p-4 border-b border-transparent rounded-t-base hover:text-fg-brand hover:border-brand group"
+            data-tab="completed">
+            <!-- Icon -->
+            <svg class="w-4 h-4 me-2 text-body group-hover:text-fg-brand" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Completed Verifications
+          </button>
+        </li>
+
+        <li class="me-2">
+          <button type="button"
+            class="tab-button inline-flex items-center justify-center p-4 border-b border-transparent rounded-t-base hover:text-fg-brand hover:border-brand group"
+            data-tab="stats">
+            <!-- Icon -->
+            <svg class="w-4 h-4 me-2 text-body group-hover:text-fg-brand" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-width="2" d="M4 19h16M4 15h10M4 11h7M4 7h4" />
+            </svg>
+            Statistics
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Tab content -->
+<div id="tabContents" class="mt-2">
+  <!-- Pending Certificates -->
+  <div class="tab-content hidden" id="pending">
+    <div class="overflow-x-auto bg-white shadow rounded-lg">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <i class="fas fa-certificate mr-1"></i> Certificate
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <i class="fas fa-user-graduate mr-1"></i> Student
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <i class="fas fa-book mr-1"></i> Course
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <i class="fas fa-calendar-alt mr-1"></i> Graduation Year
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <i class="fas fa-info-circle mr-1"></i> Status
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <i class="fas fa-cogs mr-1"></i> Action
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for verification in pending %}
+          <tr>
+            <td class="px-6 py-4">
+              {{ verification.certificate.certificate_id }}
+            </td>
+            <td class="px-6 py-4">
+              {{ verification.certificate.student_name }}
+            </td>
+            <td class="px-6 py-4">
+              {{ verification.certificate.course_name }}
+            </td>
+            <td class="px-6 py-4">
+              {{ verification.certificate.graduation_year }}
+            </td>
+            <td class="px-6 py-4">
+              <span class="px-2 py-1 bg-yellow-200 text-yellow-800 rounded flex items-center">
+                <i class="fas fa-hourglass-half mr-1"></i> Pending
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <button class="bg-blue-700 hover:bg-blue-900 text-white px-3 py-1 rounded sendVerificationBtn flex items-center"
+                data-cert-id="{{ verification.verification_id }}">
+                <i class="fas fa-paper-plane mr-1"></i> Reminder
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Completed Verifications -->
+  <div class="tab-content hidden" id="completed">
+    <div class="overflow-x-auto bg-white shadow rounded-lg">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <i class="fas fa-certificate mr-1"></i> Certificate
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <i class="fas fa-user-graduate mr-1"></i> Student
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <i class="fas fa-check mr-1"></i> Result
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <i class="fas fa-calendar-check mr-1"></i> Verified At
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for verification in completed %}
+          <tr>
+            <td class="px-6 py-4">
+              {{ verification.certificate.certificate_id }}
+            </td>
+            <td class="px-6 py-4">
+              {{ verification.certificate.student_name }}
+            </td>
+            <td class="px-6 py-4"><i class="fas fa-check text-green-600 mr-1"></i> {{ verification.status|capitalize }}</td>
+            <td class="px-6 py-4">
+              {{ verification.verified_at.strftime('%Y-%m-%d %H:%M') if verification.verified_at else '-' }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Statistics -->
+  <div class="tab-content hidden" id="stats">
+    <!-- Certificate Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <!-- Pending Certificates -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600 flex items-center">
+            <i class="fas fa-hourglass-half mr-1"></i> Pending Certificates
+          </p>
+          <p class="text-3xl font-bold text-gray-900 mt-2">{{ pending|length }}</p>
+        </div>
+        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-hourglass-half text-yellow-600 text-xl"></i>
+        </div>
+      </div>
+
+      <!-- Completed Verifications -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600 flex items-center">
+            <i class="fas fa-check-circle mr-1"></i> Completed Verifications
+          </p>
+          <p class="text-3xl font-bold text-gray-900 mt-2">{{ completed|length }}</p>
+        </div>
+        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-check-circle text-green-600 text-xl"></i>
+        </div>
+      </div>
+
+      <!-- Total Certificates -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600 flex items-center">
+            <i class="fas fa-certificate mr-1"></i> Total Certificates
+          </p>
+          <p class="text-3xl font-bold text-gray-900 mt-2">{{ pending|length + completed|length }}</p>
+        </div>
+        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-certificate text-blue-600 text-xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Verifications Chart Card -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+      <h4 class="text-md font-semibold mb-2">
+        <i class="fas fa-chart-line mr-1"></i> Verifications Over Time
+      </h4>
+      <canvas id="verificationsChart" class="w-full h-40"></canvas>
+    </div>
+  </div>
+</div>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const completedData = {{ completed | map(attribute = 'verified_at') | list | tojson | safe
+  }};
+  const tabButtons = document.querySelectorAll(".tab-button");
+  const tabContents = document.querySelectorAll(".tab-content");
+
+  // --- Make "Pending Certificates" tab active by default ---
+  tabContents.forEach(tc => tc.classList.add("hidden")); // hide all
+  document.getElementById("pending").classList.remove("hidden"); // show pending
+  tabButtons.forEach(tb => tb.classList.remove("border-blue-600", "text-blue-600", "border-b"));
+  tabButtons[0].classList.add("border-blue-600", "text-blue-600", "border-b"); // first tab
+
+  // Tabs click logic
+  tabButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const target = btn.dataset.tab;
+      tabContents.forEach(tc => tc.classList.add("hidden"));
+      tabButtons.forEach(tb => tb.classList.remove("border-blue-600", "text-blue-600", "border-b"));
+
+      document.getElementById(target).classList.remove("hidden");
+      btn.classList.add("border-blue-600", "text-blue-600", "border-b");
+
+      if (target === "stats" && !window.verificationsChartRendered) {
+        renderVerificationsChart();
+        window.verificationsChartRendered = true;
+      }
+    });
+  });
+ function renderVerificationsChart(completedData = [], pendingData = []) {
+    const ctx = document.getElementById("verificationsChart").getContext("2d");
+
+    // Aggregate completed verifications by month
+    const completedCounts = {};
+    completedData.forEach(dateStr => {
+        if (!dateStr) return;
+        const d = new Date(dateStr);
+        const label = d.toLocaleString("default", { month: "short", year: "numeric" });
+        completedCounts[label] = (completedCounts[label] || 0) + 1;
+    });
+
+    // Aggregate pending verifications (optional)
+    const pendingCounts = {};
+    pendingData.forEach(dateStr => {
+        if (!dateStr) return;
+        const d = new Date(dateStr);
+        const label = d.toLocaleString("default", { month: "short", year: "numeric" });
+        pendingCounts[label] = (pendingCounts[label] || 0) + 1;
+    });
+
+    const labels = Array.from(new Set([...Object.keys(completedCounts), ...Object.keys(pendingCounts)])).sort(
+        (a, b) => new Date(a) - new Date(b)
+    );
+
+    const data = {
+        labels,
+        datasets: [
+            {
+                label: "Completed Verifications",
+                data: labels.map(l => completedCounts[l] || 0),
+                type: "bar",
+                backgroundColor: "#22c55e",
+                borderRadius: 5,
+            },
+            {
+                label: "Pending Verifications",
+                data: labels.map(l => pendingCounts[l] || 0),
+                type: "line",
+                borderColor: "#3b82f6",
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true,
+                backgroundColor: "rgba(59,130,246,0.1)",
+                pointBackgroundColor: "#3b82f6",
+            },
+        ],
+    };
+
+    new Chart(ctx, {
+        type: "bar",
+        data,
+        options: {
+            responsive: true,
+            plugins: { legend: { display: true, position: "top" } },
+            scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { drawBorder: false } } },
+        },
+    });
+}
+
+  // Reminder button logic
+  document.querySelectorAll(".sendVerificationBtn").forEach(btn => {
+    btn.addEventListener("click", function () {
+      const verificationId = this.dataset.certId;
+
+      fetch(`/verifications/remind/${verificationId}`, { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+          window.showFlash(data.message, data.status || "success");
+        })
+        .catch(() => {
+          window.showFlash("Failed to send reminder", "error");
+        });
+    });
+  });
+});
+</script>
+
+
+{% endblock %}

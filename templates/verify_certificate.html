@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="bg-gray-100 min-h-screen">
+
+    <div class="max-w-3xl mx-auto pt-12">
+
+        <!-- CARD -->
+        <div class="bg-white p-8 rounded-xl shadow">
+            <h3 class="text-2xl font-semibold mb-4">Certificate Verification</h3>
+
+            <!-- Certificate Info -->
+            <div class="space-y-1 text-gray-700">
+                <p><span class="font-semibold">Student:</span> {{ certificate.student_name }}</p>
+                <p><span class="font-semibold">Certificate ID:</span> {{ certificate.certificate_id }}</p>
+                <p><span class="font-semibold">Program:</span> {{ certificate.program }}</p>
+                <p><span class="font-semibold">Issued:</span> {{ certificate.created_at.strftime('%d %B %Y') }}</p>
+            </div>
+
+            <hr class="my-6">
+
+            <!-- Verification Buttons -->
+            <form method="POST" class="flex gap-3">
+                <button name="action" value="valid"
+                    class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg">
+                    Mark as Valid
+                </button>
+
+                <button name="action" value="invalid"
+                    class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg">
+                    Mark as Invalid
+                </button>
+
+                <a href="{{ url_for('api.index') }}"
+                    class="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-lg">
+                    Cancel
+                </a>
+            </form>
+
+            <hr class="my-6">
+
+            <!-- Button to Open Modal -->
+            <button id="openModalBtn"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg">
+                Send Certificate for Verification
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================
+         VERIFICATION REQUEST MODAL
+    ============================ -->
+    <div id="verificationModal" class="fixed inset-0 z-40 bg-black bg-opacity-50 hidden flex items-center justify-center">
+        <div class="bg-white p-6 rounded-xl w-full max-w-lg shadow-lg relative">
+
+            <!-- Close Button -->
+            <button id="closeModalBtn"
+                    class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
+                ✖
+            </button>
+
+            <h2 class="text-xl font-semibold mb-4">Send Certificate to Institution</h2>
+
+            <form action="{{ url_for('api.request_verification', certificate_id=certificate.certificate_id) }}"
+                  method="POST"
+                  class="space-y-4">
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Institution Email</label>
+                    <input type="email"
+                           name="institution_email"
+                           placeholder="Enter institution email"
+                           required
+                           class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-300">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Message (optional)</label>
+                    <textarea name="message"
+                              class="w-full mt-1 p-2 border rounded-lg h-24 focus:ring-2 focus:ring-blue-300"
+                              placeholder="Any note you want to include..."></textarea>
+                </div>
+
+                <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg w-full">
+                    Send Verification Request
+                </button>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<!-- ============================
+     NORMAL JAVASCRIPT
+============================ -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('verificationModal');
+        const openBtn = document.getElementById('openModalBtn');
+        const closeBtn = document.getElementById('closeModalBtn');
+
+        // Open modal
+        openBtn.addEventListener('click', function() {
+            modal.classList.remove('hidden');
+        });
+
+        // Close modal
+        closeBtn.addEventListener('click', function() {
+            modal.classList.add('hidden');
+        });
+
+        // Close modal if clicked outside modal content
+        window.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

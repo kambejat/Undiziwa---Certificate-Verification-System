@@ -1,0 +1,125 @@
+{% extends "layout.html" %}
+{% block title %}Send Certificate for Verification{% endblock %}
+
+{% block content %}
+
+<section class="bg-white dark:bg-gray-900 rounded-md">
+  <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
+    <h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-white flex items-center space-x-2">
+      <i class="fas fa-envelope-open-text text-green-600"></i>
+      <span>Send Certificate for Verification</span>
+    </h2>
+    
+    <form action="{{ url_for('api.request_verification') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+      {% if csrf_token %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      {% endif %}
+
+      <!-- Student Name -->
+      <div class="relative">
+        <label for="student_name" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Student Name</label>
+        <div class="relative">
+          <i class="fas fa-user absolute top-3 left-2 text-gray-400"></i>
+          <input type="text" name="student_name" id="student_name" placeholder="Enter student name" required
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md pl-8 focus:ring-primary-500 focus:border-primary-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+        </div>
+      </div>
+
+      <!-- Student Number (Optional) -->
+      <div class="relative">
+        <label for="student_number" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Student Number (optional)</label>
+        <div class="relative">
+          <i class="fas fa-id-card absolute top-3 left-2 text-gray-400"></i>
+          <input type="text" name="student_number" id="student_number" placeholder="Enter student number"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md pl-8 focus:ring-primary-500 focus:border-primary-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+        </div>
+      </div>
+
+      <!-- Course Name -->
+      <div class="relative">
+        <label for="course_name" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Course Name</label>
+        <div class="relative">
+          <i class="fas fa-book absolute top-3 left-2 text-gray-400"></i>
+          <input type="text" name="course_name" id="course_name" placeholder="Enter course name" required
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md pl-8 focus:ring-primary-500 focus:border-primary-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+        </div>
+      </div>
+
+      <!-- Graduation Year -->
+      <div class="relative">
+        <label for="graduation_year" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Graduation Year</label>
+        <div class="relative">
+          <i class="fas fa-calendar-alt absolute top-3 left-2 text-gray-400"></i>
+          <input type="number" name="graduation_year" id="graduation_year" placeholder="e.g. 2025" required
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md pl-8 focus:ring-primary-500 focus:border-primary-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+        </div>
+      </div>
+
+      <!-- Institution -->
+      <div class="relative">
+        <label for="institution_id" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Institution</label>
+        <div class="relative">
+          <i class="fas fa-university absolute top-3 left-2 text-gray-400"></i>
+          <select name="institution_id" id="institution_id" required
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg pl-8 focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            <option value="">-- Select Institution --</option>
+            {% for inst in institutions %}
+              <option value="{{ inst.institution_id }}">{{ inst.name }} ({{ inst.email }})</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- Message -->
+      <div class="relative">
+        <label for="message" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Message (optional)</label>
+        <div class="relative">
+          <i class="fas fa-comment-alt absolute top-3 left-2 text-gray-400"></i>
+          <textarea name="message" id="message" rows="3" placeholder="Your message"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg pl-8 focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+        </div>
+      </div>
+
+      <!-- Certificate Upload -->
+      <div>
+        <label for="certificate_file" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Upload Certificate</label>
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-file-upload text-gray-500 text-lg"></i>
+          <input type="file" name="certificate_file" id="certificate_file" required
+            class="cursor-pointer bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full shadow-xs placeholder:text-body dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or PDF (MAX. 10MB).</p>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit"
+        class="text-white bg-green-600 hover:bg-green-700 w-full font-medium rounded-lg text-sm px-4 py-2.5 flex items-center justify-center space-x-2 focus:ring-4 focus:ring-green-300">
+        <i class="fas fa-paper-plane"></i>
+        <span>Send for Verification</span>
+      </button>
+    </form>
+  </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+  try {
+    const res = await fetch("/institutions/json");
+    const institutions = await res.json();
+
+    const select = document.getElementById("institution_id");
+    select.innerHTML = '<option value="">-- Select Institution --</option>';
+
+    institutions.forEach((inst) => {
+      const option = document.createElement("option");
+      option.value = inst.id;  // make sure this matches your JSON
+      option.textContent = `${inst.name} (${inst.email})`;
+      select.appendChild(option);
+    });
+  } catch (err) {
+    console.error("Error fetching institutions:", err);
+  }
+});
+</script>
+
+{% endblock %}

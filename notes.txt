@@ -1,0 +1,6 @@
+python create_user.py admin "System Admin" admin@ex.com 088899901 Admin super_admin
+
+python create_institution.py "My Institution" instemail@example.com 1234567890
+
+flask db migrate -m "Add username field to User model"
+flask db upgrade

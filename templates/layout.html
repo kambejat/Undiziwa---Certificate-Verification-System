@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Undiziwa{% endblock %}</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0"></script>
+
+</head>
+
+<body class="bg-gray-200">
+  <div x-data="{ sidebarOpen: false }" class="flex h-screen">
+    <!-- MOBILE BACKDROP -->
+    <div :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false"
+      class="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden"></div>
+
+    <!-- SIDEBAR -->
+    <div :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+      class="fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 overflow-y-auto transform transition duration-300 lg:translate-x-0 lg:static">
+      <div class="flex justify-center mt-8">
+        <div class="flex items-center">
+          <i class="fas fa-certificate fa-2x text-indigo-600"></i>
+          <span class="ml-3 text-2xl font-semibold text-white">Dashboard</span>
+        </div>
+      </div>
+
+      <nav class="mt-10">
+        <a class="flex items-center px-6 py-2 mt-4 text-gray-100 bg-gray-700 bg-opacity-25 hover:text-white hover:bg-gray-700"
+          href="{{ url_for('api.index') }}">
+          <i class="fas fa-home mr-3 text-cordes-accent group-hover:text-white"></i>
+          <span class="ml-3">Dashboard</span>
+        </a>
+
+        <a class="flex items-center px-6 py-2 mt-4 text-gray-400 hover:bg-gray-700 hover:text-white"
+          href="{{ url_for('api.view_institutions') }}">
+          <i class="fas fa-university mr-3"></i>
+          <span class="ml-3">Institutions</span>
+        </a>
+
+        <a class="flex items-center px-6 py-2 mt-4 text-gray-400 hover:bg-gray-700 hover:text-white"
+          href="{{ url_for('api.view_verifications') }}">
+          <i class="fas fa-check-circle mr-3"></i>
+          <span class="ml-3">Verifications</span>
+        </a>
+
+        <a class="flex items-center px-6 py-2 mt-4 text-gray-400 hover:bg-gray-700 hover:text-white"
+          href="{{ url_for('api.view_certificates') }}">
+          <i class="fas fa-file-alt mr-3"></i>
+          <span class="ml-3">Certificates</span>
+        </a>
+
+        <a class="flex items-center px-6 py-2 mt-4 text-gray-400 hover:bg-gray-700 hover:text-white"
+          href="{{ url_for('api.view_users') }}">
+          <i class="fas fa-users mr-3"></i>
+          <span class="ml-3">Users</span>
+        </a>
+
+        <a class="flex items-center px-6 py-2 mt-4 text-gray-400 hover:bg-gray-700 hover:text-white"
+          href="{{ url_for('api.logout') }}">
+          <i class="fas fa-sign-out-alt mr-3"></i>
+          <span class="ml-3">Logout</span>
+        </a>
+      </nav>
+    </div>
+
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="flex flex-col flex-1 overflow-hidden">
+      <!-- HEADER -->
+      <header class="flex items-center justify-between px-6 py-4 bg-white border-b-4 border-indigo-600">
+        <div class="flex items-center">
+          <button @click="sidebarOpen = true" class="text-gray-500 focus:outline-none lg:hidden">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor">
+              <path d="M4 6H20M4 12H20M4 18H11" />
+            </svg>
+          </button>
+
+          <!-- Search -->
+          <div class="relative mx-4">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+              <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </span>
+
+            <input id="search-input" class="w-32 sm:w-64 pl-10 pr-8 rounded-md border focus:border-indigo-600"
+              type="text" placeholder="Search" />
+          </div>
+        </div>
+
+        <!-- USER MENU -->
+        <div class="flex items-center space-x-4">
+          <span class="text-gray-700 font-medium">
+            {% if session.get('username') %} Welcome, {{
+            session.get('username') }} {% endif %}
+          </span>
+        </div>
+      </header>
+
+      <!-- MAIN CONTENT AREA -->
+      <main class="flex-1 overflow-y-auto p-2">
+        <!-- FLASH MESSAGES (MODERN & CLEAN) -->
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %}
+        <div class="space-y-2 mb-4">
+          {% for category, message in messages %}
+          <div
+            class="p-4 rounded-lg text-white {% if category == 'success' %} bg-green-600 {% elif category == 'danger' or category == 'error' %} bg-red-600 {% elif category == 'warning' %} bg-yellow-500 {% else %} bg-blue-600 {% endif %}">
+            {{ message }}
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %} {% endwith %}
+        <!-- Loading overlay -->
+        <div id="loading-overlay"
+          class="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center hidden z-50">
+          <i class="fas fa-spinner fa-spin text-3xl text-indigo-600"></i>
+        </div>
+        <div id="main-content-wrapper">
+          {% block content %}{% endblock %}
+        </div>
+      </main>
+
+      <!-- FOOTER -->
+      <footer class="py-3 bg-white border-t text-center text-gray-600">
+        &copy; <span id="date"></span> Undiziwa — All Rights Reserved
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("date").textContent = new Date().getFullYear();
+    window.showFlash = function (
+      message,
+      type = "success",
+      duration = 5000,
+      container = "main"
+    ) {
+      const flashContainer = document.createElement("div");
+      flashContainer.className = `
+    p-4 rounded-lg text-white
+    ${type === "success"
+          ? "bg-green-600"
+          : type === "error"
+            ? "bg-red-600"
+            : type === "warning"
+              ? "bg-yellow-500"
+              : "bg-blue-600"
+        }
+    mb-2
+  `;
+      flashContainer.textContent = message;
+
+      const parent =
+        typeof container === "string"
+          ? document.querySelector(container)
+          : container;
+      if (!parent) return;
+
+      parent.prepend(flashContainer);
+
+      setTimeout(() => flashContainer.remove(), duration);
+    };
+
+    const searchInput = document.getElementById("search-input");
+    const mainContentWrapper = document.getElementById("main-content-wrapper");
+    const loadingOverlay = document.getElementById("loading-overlay");
+
+    let timeout = null;
+
+    searchInput.addEventListener("input", () => {
+      clearTimeout(timeout);
+      const query = searchInput.value.trim();
+
+      timeout = setTimeout(async () => {
+        if (!query) {
+          window.location.reload(); // or restore original content
+          return;
+        }
+
+        try {
+          // Show loading overlay
+          loadingOverlay.classList.remove("hidden");
+
+          const res = await fetch(`/search-certificates-html?q=${encodeURIComponent(query)}`);
+          const html = await res.text();
+
+          // Replace content and hide overlay
+          mainContentWrapper.innerHTML = html;
+          loadingOverlay.classList.add("hidden");
+        } catch (err) {
+          console.error(err);
+          loadingOverlay.classList.add("hidden");
+        }
+      }, 300); // debounce
+    });
+
+
+  </script>
+</body>
+
+</html>
